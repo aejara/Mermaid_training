@@ -1,0 +1,47 @@
+
+flowchart TB
+    %% Style classes
+    classDef azResource fill:#0078d4,stroke:#ffffff,color:#ffffff;
+    classDef azGroup fill:#005a9e,stroke:#ffffff,color:#ffffff;
+    classDef azSub fill:#004578,stroke:#ffffff,color:#ffffff;
+
+    %% Root
+    A[Azure Tenant]:::azSub
+
+    %% Management Groups
+    A --> MG1[Platform Management Group - Management]:::azGroup
+    A --> MG2[Platform Management Group - Connectivity]:::azGroup
+    A --> MG3[Identity Management Group]:::azGroup
+    A --> MG4[Landing Zones Management Group]:::azGroup
+
+    %% Management Subscription
+    MG1 --> SUB1[Management Subscription]:::azSub
+    SUB1 --> LA[Log Analytics Workspace]:::azResource
+    SUB1 --> ARC[Azure Automation]:::azResource
+    SUB1 --> MON[Azure Monitor]:::azResource
+
+    %% Connectivity Subscription
+    MG2 --> SUB2[Connectivity Subscription]:::azSub
+    SUB2 --> HUBVNET[Hub Virtual Network]:::azResource
+    SUB2 --> FIREWALL[Azure Firewall or NVA]:::azResource
+    SUB2 --> VPNGW[VPN Gateway]:::azResource
+    SUB2 --> EXPRGW[ExpressRoute Gateway]:::azResource
+
+    %% Identity Subscription
+    MG3 --> SUB3[Identity Subscription]:::azSub
+    SUB3 --> AADDS[Microsoft Entra Domain Services - optional]:::azResource
+    SUB3 --> DC1[Identity Components]:::azResource
+
+    %% Landing Zone Subscription
+    MG4 --> SUB4[Application Landing Zone Subscription]:::azSub
+    SUB4 --> APPVNET[Landing Zone Virtual Network]:::azResource
+    SUB4 --> APPSVC[App Service / AKS / VMs]:::azResource
+    SUB4 --> DB[Database Services - SQL or Cosmos DB]:::azResource
+    SUB4 --> KV[Key Vault]:::azResource
+    SUB4 --> SA[Storage Accounts]:::azResource
+
+    %% Networking links
+    APPVNET --- HUBVNET
+
+    %% Identity / RBAC relationship
+    SUB4 -->|RBAC / Managed Identity| MG3
